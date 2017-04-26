@@ -83,9 +83,9 @@ public class GrfAllEdge {
 						this.printStack(stack, i);
 						System.out.print("经过点数："+(stack.size()+1)+" ");
 						System.out.print("路径长度:"+countWeight(stack,i)+"  ");
-		                printStack1(stack);
+		               // printStack1(stack);
 		               
-					  //  addPaths(paths,stack);
+					   addPaths(paths,stack);
 						//printStack1(this.paths.get(1));
 						}
 						continue;
