@@ -13,11 +13,12 @@ public class GrfAllEdge {
 		private int[][] matirx;
 		private ArrayList<Stack<Integer>> paths;
 		
-		public GrfAllEdge(int total,String[] nodes){
+		public GrfAllEdge(int total,String[] nodes,ArrayList<Stack<Integer>> list){
 			this.total=total;
 			this.nodes=nodes;
 			this.matirx=new int[total][total];
-			this.paths=new ArrayList<Stack<Integer>>();
+			//this.paths=new ArrayList<Stack<Integer>>();
+			this.paths=list;
 		}
 		
 		
@@ -40,7 +41,22 @@ public class GrfAllEdge {
 		return s ;
 		}
 		
-		private void addPaths(ArrayList<Stack<Integer>>paths,Stack<Integer> stack){
+		private boolean isConnect(Stack<Integer>stack,int i,int j){
+			if(stack==null)
+				return false;
+			
+			while(!stack.isEmpty()){
+				int temp=stack.pop();
+				if(temp==i||temp==j){
+					if(stack.peek()==i||stack.peek()==j)
+						return true;
+				}
+			}
+			
+			return false;
+		}
+		
+		private void addPaths(Stack<Integer> stack){
 			Stack<Integer> stacknew=(Stack<Integer>)stack.clone();
 			this.paths.add(stacknew);	
 		}
@@ -64,33 +80,31 @@ public class GrfAllEdge {
 			for(int i=0;i<this.total;i++){
 				
 				if(this.matirx[k][i]>=1&&k!=i){
+					
 					if(stack.contains(i)){
 						if(i!=uk){
 							//if(stack.contains(7)&&stack.contains(12)){
 //								System.out.print("\n有环:");
 //								this.printStack(stack, i);
-							//}
-							
+							//}	
 						}
 						continue;
 					}
 					
 					if(i==goal){
-						
-						if(stack.size()<9/*&&stack.contains(7)&&stack.contains(12)&&stack.contains(2)&&stack.contains(4)*/){
+						if(stack.size()<9&&stack.contains(7)&&stack.contains(12)){
 							
-						System.out.print("\n路径:");
-						this.printStack(stack, i);
-						System.out.print("经过点数："+(stack.size()+1)+" ");
-						System.out.print("路径长度:"+countWeight(stack,i)+"  ");
-		               // printStack1(stack);
-		               
-					   addPaths(paths,stack);
-						//printStack1(this.paths.get(1));
+						    System.out.print("\n路径:");
+						    this.printStack(stack, i);
+						    System.out.print("经过点数："+(stack.size()+1)+" ");
+						    System.out.print("路径长度:"+countWeight(stack,i)+"  ");
+		                    //printStack1(stack);
+					        addPaths(stack);
+						    //printStack1(this.paths.get(1));
 						}
 						continue;
 					}		
-						
+					
 					stack.push(i);
 					dfsStack(k, goal, stack);		
 					
@@ -98,10 +112,8 @@ public class GrfAllEdge {
 			}		
 			
 			stack.pop();	
-			
-			
+				
 		}
-		
 		
 		private  void replaceZeroToMax(int[][] graph){
 			if(graph==null)
@@ -116,11 +128,8 @@ public class GrfAllEdge {
 						else
 						    graph[i][j]=Integer.MAX_VALUE;
 						}
-					//System.out.print(graph[i][j]+" ");
 				}
-				//System.out.println();
-			}
-				
+			}		
 		}
 		
 		//Dijkstra最小路径
@@ -245,7 +254,8 @@ public class GrfAllEdge {
 		
 		public static void main(String[] args){
 			String[] nodes=new String[]{"A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R"};
-			GrfAllEdge grf=new GrfAllEdge(18, nodes);
+			ArrayList<Stack<Integer>> paths=new ArrayList<Stack<Integer>>();
+			GrfAllEdge grf=new GrfAllEdge(18, nodes,paths);
 			
 			grf.initGrf();
 			//grf.printMatrix();
@@ -255,38 +265,18 @@ public class GrfAllEdge {
 			int origin=0;
 			int goal=17;
 			Stack<Integer> stack=new Stack<Integer>();
-			ArrayList<Stack<Integer>> paths=new ArrayList<Stack<Integer>>();
+			
 			stack.push(origin);
 			grf.dfsStack(-1, goal, stack);
-			//System.out.println();
-			//System.out.println(grf.paths.size());
+
+			System.out.println(paths.size());
 			//grf.printPaths(grf.paths);
-			//grf.printStack1(paths.get(0));
+			//grf.printStack1(paths.get(1));
 			//System.out.println();
 			//grf.dijkstraown(grf.matirx,0,17);
+			System.out.println(grf.isConnect(paths.get(2), 2, 4));
 			
 		
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 	
-
 }
