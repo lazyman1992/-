@@ -181,27 +181,27 @@ public class GrfAllEdge {
 //		
 		
 		
-		//判断无欢路径符合条件的解
-		private void searchPaths(ArrayList<Stack<Integer>> paths){
+		//判断无环路径符合条件的解
+		private void searchPaths(ArrayList<Path> paths){
 			if(paths==null)
 				return ;
 			int num=0;
 			for(int i=0;i<paths.size();i++){
 				//符合所有约束路径
 				//printStack(paths.get(i), 17);
-				if(paths.get(i).contains(7)&&paths.get(i).contains(12)&&isConnect(paths.get(i), 2, 4)&&isConnect(paths.get(i), 14, 15)){
+				if(paths.get(i).path.contains(7)&&paths.get(i).path.contains(12)&&isConnect(paths.get(i).path, 2, 4)&&isConnect(paths.get(i).path, 14, 15)){
 					System.out.println("---符合所有约束路径---");
 					System.out.print("路径：");
-					printStack(paths.get(i), 17);
+					printStack(paths.get(i).path, 17);
 					num++;
 				}		
-				else if(paths.get(i).contains(7)||paths.get(i).contains(12)||isConnect(paths.get(i), 2, 4)||isConnect(paths.get(i), 14, 15)){
+				else if(paths.get(i).path.contains(7)||paths.get(i).path.contains(12)||isConnect(paths.get(i).path, 2, 4)||isConnect(paths.get(i).path, 14, 15)){
 					//System.out.println("---至少符合一条约束路径---");
 					//printStack(paths.get(i), 17);
 					System.out.print("符合一条约束路径：");
-					printStack(paths.get(i), 17);	
-					System.out.print("经过点数："+(paths.get(i).size()+1)+" ");
-				    System.out.print("路径长度:"+countWeight(paths.get(i),17)+"  ");
+					printStack(paths.get(i).path, 17);	
+					System.out.print("经过点数："+(paths.get(i).path.size()+1)+" ");
+				    System.out.print("路径长度:"+countWeight(paths.get(i).path,17)+"  ");
 				    System.out.println();
 					num++;
 				}
@@ -393,8 +393,8 @@ public class GrfAllEdge {
 			//System.out.println(grf.isConnect(paths.get(2), 2, 4));\
 			System.out.println();
 			System.out.println("---------------符合约束路径------------------");
-			//grf.searchPaths(paths);
-			System.out.println(paths.get(0).weight);
+			grf.searchPaths(paths);
+			//System.out.println(paths.get(0).weight);
 		
 		}
 	
