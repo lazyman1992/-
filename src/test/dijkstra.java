@@ -1,6 +1,7 @@
 package test;
 
-import java.util.Stack;
+
+
 
 public class dijkstra {
 	
@@ -47,9 +48,18 @@ public class dijkstra {
 		return d;
 	}
 	
-	
-	
-	
+	//floyd算法求两点最小路径
+	public static int[][] floyd(int[][] graph){
+		int n=graph.length;
+		for(int k=0;k<n;k++)
+			for(int i=0;i<n;i++)
+				for(int j=0;j<n;j++){
+					if(graph[i][j]>graph[i][k]+graph[k][j]&&(graph[i][j]!=0&&graph[i][k]!=0&&graph[k][j]!=0))
+						graph[i][j]=graph[i][k]+graph[k][j];
+				}
+		
+		return graph;
+	}
 	
 	
 	
@@ -61,6 +71,17 @@ public class dijkstra {
 		
 	}
 	
+	
+	public static void printMatrix(int[][] graph){
+		int r=graph.length;
+		int c=graph[0].length;
+		for(int i=0;i<r;i++){
+			for(int j=0;j<c;j++){
+				System.out.print(graph[i][j]+" ");
+			}
+			System.out.println();
+			}
+	}
 	public static void replaceZeroToMax(int[][] graph){
 		if(graph==null)
 			return ;
@@ -85,14 +106,20 @@ public class dijkstra {
 	public static void main(String[] args){
 		int[][] graph={{0,6,3,0,0,0},{6,0,2,5,0,0},{3,2,0,3,4,0},{0,5,3,0,2,3},{0,0,4,2,0,5},{0,0,0,3,5,0}};
 		//char[] mVexs={'A','B','C','D','E','F'};
-		replaceZeroToMax(graph);
+//		replaceZeroToMax(graph);
+//		
+//		
+//		
+//		int[] d=dijkstraown(graph,0);
+//		
+//		
+//		printArr(d);
 		
+		printMatrix(graph);
+		graph=floyd(graph);
 		
-		
-		int[] d=dijkstraown(graph,0);
-		
-		
-		printArr(d);
+		System.out.println();
+		printMatrix(graph);
 		
 
 		
