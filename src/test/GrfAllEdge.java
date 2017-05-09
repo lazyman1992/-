@@ -20,7 +20,7 @@ public class GrfAllEdge {
 		
 		//定义新类，包含路径和路径权重
 		public class Path{
-			public Stack<Integer> path;
+			public Stack<Integer> path;//不包含终点
 			public int weight;	
 			public Path(Stack<Integer> stack,int weight){
 				this.path=stack;
@@ -38,10 +38,10 @@ public class GrfAllEdge {
 		
 		
 		//打印栈
-		private  void printStack(Stack<Integer> stack,int k){
+		private  void printStack(Stack<Integer> stack){
 			for(Integer i:stack)
 				System.out.print(i+",");
-			System.out.print(k);
+	//		System.out.print(k);
 		}
 		
 		
@@ -93,9 +93,19 @@ public class GrfAllEdge {
 				
 		
 		//计算路径的权重
+//		private int countWeight(Stack<Integer> stack){
+//			Stack<Integer> stack1=(Stack<Integer>) stack.clone();
+////			stack1.push(k);
+//			int s=0;
+//		while(stack1.size()!=1){
+//			 s=s+this.matirx[stack1.pop()][stack1.peek()];
+//			}			
+//		return s ;
+//		}
+		
 		private int countWeight(Stack<Integer> stack,int k){
 			Stack<Integer> stack1=(Stack<Integer>) stack.clone();
-			stack1.push(k);
+		stack1.push(k);
 			int s=0;
 		while(stack1.size()!=1){
 			 s=s+this.matirx[stack1.pop()][stack1.peek()];
@@ -117,6 +127,7 @@ public class GrfAllEdge {
 			}	
 			return false;
 		}
+		
 		
 		//向Path中添加path
 		private void addPaths(Path path){
@@ -145,21 +156,22 @@ public class GrfAllEdge {
 				if(this.matirx[k][i]>=1&&k!=i){
 					
 					if(stack.contains(i)){
-
+						
 						continue;
 					}
 					
 					if(i==goal){
-						if(stack.contains(7)&&stack.contains(12)&&isConnect(stack, 2, 4)&&isConnect(stack, 13, 14)){
+						//if(stack.contains(7)&&stack.contains(12)&&isConnect(stack, 2, 4)&&isConnect(stack, 13, 14)){
 							
-						    System.out.print("\n路径:");
-						    System.out.print("经过点数："+(stack.size()+1)+" ");
-						    System.out.print("路径长度:"+countWeight(stack,i)+"  ");
-		                    this.printStack(stack,i);
-					        Path path=new Path(stack, countWeight(stack, i));
+//						    System.out.print("\n路径:");
+//						    System.out.print("经过点数："+(stack.size()+1)+" ");
+//						    System.out.print("路径长度:"+countWeight(stack,i)+"  ");
+//		                    this.printStack(stack,i);
+							//stack.push(i);
+					        Path path=new Path(stack, countWeight(stack,i));
 						    addPaths(path);
-						}
-						
+					//}
+					
 						continue;
 					}		
 					
@@ -173,137 +185,147 @@ public class GrfAllEdge {
 				
 		}
 		
+		//寻找路径集合中的最小路径
+		private   ArrayList<Path> findMinPath(ArrayList<Path> paths,int end){
+			if(paths==null)
+				return null;
+			ArrayList<Path> minPaths=new ArrayList<Path>();
+			int n=paths.size();
+			int mincost=paths.get(0).weight;
+			for(int i=0;i<n;i++){
+				if(mincost>paths.get(i).weight)
+					mincost=paths.get(i).weight;
+				
+			}
+			
+			for(int i=0;i<n;i++){
+				if(paths.get(i).weight==mincost){
+					minPaths.add(paths.get(i));
+					System.out.println("---最短路径---");
+				System.out.print("经过点数："+(paths.get(i).path.size()+1)+" ");
+			    System.out.print("路径长度:"+countWeight(paths.get(i).path,end)+"  ");
+			    System.out.println();
+                this.printStack(paths.get(i).path);
+                }
+			}
+			
+			return minPaths;
+		}
 		
 		//判断路径是否有环
-		private boolean isCycle(Stack<Integer> stack,int n,int i){
-			Stack<Integer> stacknew=(Stack<Integer>)stack.clone();
-			if(stack.pop()==n&&stack.peek()==i)
-				return true;
-			else
-				return false;
-		}
+//		private boolean isCycle(Stack<Integer> stack,int n,int i){
+//			Stack<Integer> stacknew=(Stack<Integer>)stack.clone();
+//			if(stack.pop()==n&&stack.peek()==i)
+//				return true;
+//			else
+//				return false;
+//		}
 			
+		
+		
 		//判断无环路径符合条件的解
-		private void searchPaths(ArrayList<Path> paths){
+		private void searchPaths(ArrayList<Path> paths,int n1,int n2,int b1,int b2,int b3,int b4){
 			if(paths==null)
 				return ;
 			int num=0;
+			
 			for(int i=0;i<paths.size();i++){
-				//符合所有约束路径
-				//printStack(paths.get(i), 17);
-				if(paths.get(i).path.contains(7)&&paths.get(i).path.contains(12)&&isConnect(paths.get(i).path, 2, 4)&&isConnect(paths.get(i).path, 14, 15)){
-					System.out.println("---符合所有约束路径---");
-					System.out.print("路径：");
-					printStack(paths.get(i).path, 17);
-					num++;
-				}		
-				else if(paths.get(i).path.contains(7)||paths.get(i).path.contains(12)||isConnect(paths.get(i).path, 2, 4)||isConnect(paths.get(i).path, 14, 15)){
-					//System.out.println("---至少符合一条约束路径---");
-					//printStack(paths.get(i), 17);
-					System.out.print("符合一条约束路径：");
-					printStack(paths.get(i).path, 17);	
-					System.out.print("经过点数："+(paths.get(i).path.size()+1)+" ");
-				    System.out.print("路径长度:"+countWeight(paths.get(i).path,17)+"  ");
-				    System.out.println();
-					num++;
-				}
+				
+			
+				
+				
 	
 			}
 			System.out.println(num);
 		
 		}
 		
-//		private  void replaceZeroToMax(int[][] graph){
-//			if(graph==null)
-//				return ;
-//			int r=graph.length;
-//			int c=graph[0].length;
-//			for(int i=0;i<r;i++){
-//				for(int j=0;j<c;j++){
-//					if(graph[i][j]==0){
-//						if(i==j)
-//							graph[i][j]=0;
-//						else
-//						    graph[i][j]=Integer.MAX_VALUE;
-//						}
-//				}
-//			}		
-//		}
-//		
+		
+		
+		
+		private  void replaceZeroToMax(int[][] graph){
+			if(graph==null)
+				return ;
+			int r=graph.length;
+			int c=graph[0].length;
+			for(int i=0;i<r;i++){
+				for(int j=0;j<c;j++){
+					if(graph[i][j]==0){
+						if(i==j)
+							graph[i][j]=0;
+						else
+						    graph[i][j]=Integer.MAX_VALUE;
+						}
+				}
+			}		
+		}
+		
 		//Dijkstra最小路径
-//		private  int dijkstraown(int[][] graph,int start,int end){
-//			if(graph==null)
-//				return 0;
-//			replaceZeroToMax(graph);
-//			
-//			//初始化d p向量
-//			int n=graph[0].length;
-//			int[] d=new int[n];
-//			int[] p=new int[n];
-//			boolean[] v=new boolean[n];
-//			for(int i=0;i<=n-1;i++){
-//				d[i]=graph[start][i];
-//				v[i]=false;
-//				p[i]=0;
-//			}	
-//			
-//			v[start]=true;
-//			int min,k=0;
-//			
-//			for(int i=1;i<n;i++){
-//				 min=Integer.MAX_VALUE;k=0;
-//				for(int j=1;j<n;j++){
-//					if(!v[j]&&d[j]<min){
-//						min=d[j];
-//						k=j;
-//					}			
-//				}
-//				v[k]=true;
-//				for(int j=1;j<n;j++){
-//					int tmp=(graph[k][j]==Integer.MAX_VALUE?Integer.MAX_VALUE:(min+graph[k][j]));
-//					if(!v[j]&&tmp<d[j]){
-//						d[j]=min+graph[k][j];
-//						p[j]=k;
-//					}		
-//				}
-//			
-//			}
-//			System.out.print("路径：");
-//			printArr(p);
-//			System.out.print("起始点到各点的最小距离：");
-//			printArr(d);
-//			return d[end];
-//		}
+		private  int dijkstraown(int[][] graph,int start,int end){
+			if(graph==null)
+				return 0;
+			replaceZeroToMax(graph);
+			
+			//初始化d p向量
+			int n=graph[0].length;
+			int[] d=new int[n];
+			int[] p=new int[n];
+			boolean[] v=new boolean[n];
+			for(int i=0;i<=n-1;i++){
+				d[i]=graph[start][i];
+				v[i]=false;
+				p[i]=0;
+			}	
+			
+			v[start]=true;
+			int min,k=0;
+			
+			for(int i=0;i<n;i++){
+				 min=Integer.MAX_VALUE;k=0;
+				for(int j=0;j<n;j++){
+					if(!v[j]&&d[j]<min){
+						min=d[j];
+						k=j;
+					}			
+				}
+				v[k]=true;
+				for(int j=0;j<n;j++){
+					int tmp=(graph[k][j]==Integer.MAX_VALUE?Integer.MAX_VALUE:(min+graph[k][j]));
+					if(!v[j]&&tmp<d[j]){
+						d[j]=min+graph[k][j];
+						p[j]=k;
+					}		
+				}
+			
+			}
+			//System.out.print("路径：");
+			//printArr(p);
+			//System.out.print("起始点到各点的最小距离：");
+			//printArr(d);
+			return d[end];
+		}
 		
 		
+		//有环判定函数
+		private int isCycle(int[][] graph,int n1,int n2,int b1,int b2,int b3,int b4){
+			int n=graph.length;
+			int d=dijkstraown(graph, n1, n2);
+			boolean flag=false;
+			if(((n1==b1)&&(n2==b2))||((n1==b2)&&(n2==b1))||((n1==b3)&&(n2==b4))||((n1==b3)&&(n2==b4)))
+				flag=false;
+			else
+				flag=true;
+			for(int k=0;k<n;k++){
+				if(graph[n1][k]>0&&graph[n2][k]>0&&(d==graph[n1][k]+graph[k][n2])&&flag)
+					return k;
+			}
+			
+			return 0;
+		}
 		
 		
 		//初始化邻接矩阵
 		private void initGrf(int[][] graph){	
-			
-			
-//			int[][]matirx1={ 	{0,3,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//	                {3,0,1,0,1,0,0,0,0,4,0,0,0,0,0,0,0,0},
-//	                {1,1,0,1,2,1,0,0,0,0,0,0,0,0,0,0,0,0},
-//	                {1,0,1,0,0,2,2,1,0,0,0,0,0,0,0,0,0,0},
-//	                {0,1,2,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0},
-//	                {0,0,1,2,1,0,1,0,0,3,1,0,3,0,0,0,0,0},
-//	                {0,0,0,2,0,1,0,1,2,0,0,0,2,4,3,0,0,0},
-//	                {0,0,0,1,0,0,1,0,1,0,0,0,0,0,0,0,0,0},
-//	                {0,0,0,0,0,0,2,1,0,0,0,0,0,0,1,3,0,0},
-//	                {0,4,0,0,1,3,0,0,0,0,1,1,0,0,0,0,0,0},
-//	                {0,0,0,0,0,1,0,0,0,1,0,1,2,0,0,0,0,0},
-//	                {0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0,1,0},
-//	                {0,0,0,0,0,3,2,0,0,0,2,1,0,2,0,0,1,0},
-//	                {0,0,0,0,0,0,4,0,0,0,0,0,2,0,1,2,2,1},
-//	                {0,0,0,0,0,0,3,0,1,0,0,0,0,1,0,1,0,0},
-//	                {0,0,0,0,0,0,0,0,3,0,0,0,0,2,1,0,0,4},
-//	                {0,0,0,0,0,0,0,0,0,0,0,1,1,2,0,0,0,1},
-//	                {0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,4,1,0}};
-//			
-//			for(int i=0;i<18;i++)
-//				for(int j=0;j<18;j++)
-//					this.matirx[i][j]=matirx1[i][j];
 			
 			
 			int pointnum=graph[0][0];
@@ -361,7 +383,7 @@ public class GrfAllEdge {
 		            while ((line = br.readLine()) != null)  //读取到的内容给line变量
 		            {
 		                everyLine = line;
-		                System.out.println(everyLine);
+		                //System.out.println(everyLine);
 		                allString.add(everyLine);
 		            }
 		            int size = allString.size(); 
@@ -380,13 +402,14 @@ public class GrfAllEdge {
 		        e.printStackTrace();
 		    }
 		   
-		    ArrayList<Path> paths=new ArrayList<Path>();		
+		    ArrayList<Path> paths=new ArrayList<Path>();	//存储所有符合条件路径
+		    ArrayList<Path> minpaths=new ArrayList<Path>();//存储最短路径
 		    int origin=0;
 			int goal=obj[0][0];
 		    GrfAllEdge grf=new GrfAllEdge(goal, paths);
 			
 			grf.initGrf(obj);
-	    	grf.printMatrix();
+	    	//grf.printMatrix();
 			
 			
 			
@@ -397,6 +420,8 @@ public class GrfAllEdge {
 			grf.dfsStack(-1, goal-1, stack);
 			System.out.println();
 			System.out.println("路径总数："+paths.size());
+			minpaths=grf.findMinPath(paths,goal-1);
+			//printPaths(minpaths);
 
 			//System.out.println(paths.size());
 			//grf.printPaths(grf.paths);
