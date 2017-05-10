@@ -30,78 +30,28 @@ public class GrfAllEdge {
 		
 		public GrfAllEdge(int total,ArrayList<Path> list){
 			this.total=total;
-//			this.nodes=nodes;
 			this.matirx=new int[total][total];
-			//this.paths=new ArrayList<Stack<Integer>>();
 			this.paths=list;
 		}
 		
 		
 		//打印栈
-		private  void printStack(Stack<Integer> stack){
+		private  void printStack(Stack<Integer> stack,int k){
 			for(Integer i:stack)
-				System.out.print(i+",");
+				System.out.print(i+"->");
+			System.out.print(k);
+			System.out.println();
 	//		System.out.print(k);
 		}
 		
-		
-		//打印数组
-				private void printArr(int[] arr){
-					for(int i=0;i<arr.length;i++)
-						System.out.print(arr[i]+" ");
-					
-					System.out.println();
-					
-				}
-				
-				//打印栈
-				private void printStack1(Stack<Integer> stack){
-					for(Integer i:stack)
-						System.out.print(i+" ");
-					//System.out.println();
-				}
-				
 				//打印路径数组
 				private void printPaths(ArrayList<Stack<Integer>> paths){
 					for(int i=0;i<paths.size();i++){
-						printStack1(paths.get(i));
+						printStack(paths.get(i),this.total);
 					}
 					
 				}
 				
-				//打印邻接矩阵
-				private void printMatrix(){
-					System.out.println("----------matrix----------");
-//					System.out.println("---0-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16-17---");
-//					System.out.println("---A-B-C-D-E-F-G-H-I-J-K-L-M-N-O-P-Q-R---");
-					for(int i=0;i<this.total;i++){
-						//System.out.print(" "+this.nodes[i]+"|");
-						for(int j=0;j<this.total;j++){
-							System.out.print(this.matirx[i][j]+"-");
-						}
-						System.out.print("\n\n");
-					}
-					System.out.println("----------matrix----------");
-				}
-				
-				
-				private void resetVisited(){
-					for(int i=0;i<this.total;i++){
-						this.matirx[i][i]=0;
-					}
-				}
-				
-		
-		//计算路径的权重
-//		private int countWeight(Stack<Integer> stack){
-//			Stack<Integer> stack1=(Stack<Integer>) stack.clone();
-////			stack1.push(k);
-//			int s=0;
-//		while(stack1.size()!=1){
-//			 s=s+this.matirx[stack1.pop()][stack1.peek()];
-//			}			
-//		return s ;
-//		}
 		
 		private int countWeight(Stack<Integer> stack,int k){
 			Stack<Integer> stack1=(Stack<Integer>) stack.clone();
@@ -161,17 +111,8 @@ public class GrfAllEdge {
 					}
 					
 					if(i==goal){
-						//if(stack.contains(7)&&stack.contains(12)&&isConnect(stack, 2, 4)&&isConnect(stack, 13, 14)){
-							
-//						    System.out.print("\n路径:");
-//						    System.out.print("经过点数："+(stack.size()+1)+" ");
-//						    System.out.print("路径长度:"+countWeight(stack,i)+"  ");
-//		                    this.printStack(stack,i);
-							//stack.push(i);
 					        Path path=new Path(stack, countWeight(stack,i));
 						    addPaths(path);
-					//}
-					
 						continue;
 					}		
 					
@@ -194,53 +135,156 @@ public class GrfAllEdge {
 			int mincost=paths.get(0).weight;
 			for(int i=0;i<n;i++){
 				if(mincost>paths.get(i).weight)
-					mincost=paths.get(i).weight;
-				
+					mincost=paths.get(i).weight;		
 			}
 			
+			System.out.println("---最短路径---");
 			for(int i=0;i<n;i++){
 				if(paths.get(i).weight==mincost){
 					minPaths.add(paths.get(i));
-					System.out.println("---最短路径---");
+					System.out.print("路径：");
+				this.printStack(paths.get(i).path,this.total);
 				System.out.print("经过点数："+(paths.get(i).path.size()+1)+" ");
 			    System.out.print("路径长度:"+countWeight(paths.get(i).path,end)+"  ");
 			    System.out.println();
-                this.printStack(paths.get(i).path);
+               
                 }
 			}
 			
 			return minPaths;
 		}
 		
-		//判断路径是否有环
-//		private boolean isCycle(Stack<Integer> stack,int n,int i){
-//			Stack<Integer> stacknew=(Stack<Integer>)stack.clone();
-//			if(stack.pop()==n&&stack.peek()==i)
-//				return true;
-//			else
-//				return false;
-//		}
 			
+		//有环判定函数
+				private int isCycle(int[][] graph,int n1,int n2,int b1,int b2,int b3,int b4){
+					int n=graph.length;
+					int d=dijkstraown(graph, n1, n2);
+					
+					
+					boolean flag=false;
+					if(((n1==b1)&&(n2==b2))||((n1==b2)&&(n2==b1))||((n1==b3)&&(n2==b4))||((n1==b3)&&(n2==b4)))
+						flag=false;
+					else
+						flag=true;
+					
+					
+					for(int k=0;k<n;k++){
+						if(graph[n1][k]>0&&graph[n2][k]>0&&(d==graph[n1][k]+graph[k][n2])&&flag)
+							return k;
+					}
+					
+					return -1;
+				}
 		
-		
-		//判断无环路径符合条件的解
-		private void searchPaths(ArrayList<Path> paths,int n1,int n2,int b1,int b2,int b3,int b4){
+		//搜索符合所有条件路径中的有环和无环解
+		private void searchPaths(ArrayList<Path> paths,int[][] graph,int n1,int n2,int b1,int b2,int b3,int b4){
+			
 			if(paths==null)
 				return ;
-			int num=0;
 			
-			for(int i=0;i<paths.size();i++){
-				
 			
+			
+			//无环所有路径
+			int min=Integer.MAX_VALUE;
+			Path minpath=new Path(null, 0);
+			for(int i=0;i<paths.size();i++){		
+				if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)){	
+					if(paths.get(i).weight<min){
+						min=paths.get(i).weight;
+						minpath=paths.get(i);
+					}
+								
+				}		
+
+				}
+			System.out.println("---符合所有约束(无环最小)---");
+			System.out.print("路径：");
+			printStack(minpath.path,this.total-1);
+			System.out.print("经过点数："+(minpath.path.size()+1)+" ");
+			System.out.print("路径长度："+minpath.weight);
+			System.out.println();
+			
+			
+			//有环路径
+			int mincycle=Integer.MAX_VALUE;
+			Path minpathcycle=new Path(null, 0);
+				int[] num={n1,n2,b1,b2,b3,b4};
+				int c1,c2;
 				
-				
-	
-			}
-			System.out.println(num);
+				for(int i=0;i<paths.size();i++){
+
+					for(int k=0;k<6;k++)
+						for(int j=k+1;j<6;j++){
+						c1=num[k];
+						c2=num[j];
+						if(isCycle(graph, c1, c2, b1, b2, b3, b4)!=-1){
+							int flag=isCycle(graph, c1, c2, b1, b2, b3, b4);
+							if(isConnect(paths.get(i).path, flag, c1)&&!paths.get(i).path.contains(c2)){
+								paths.get(i).path=addNumInStack(paths.get(i).path, c2, flag);
+								paths.get(i).weight=countWeight(paths.get(i).path, 17);
+								if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)){
+									
+									if(paths.get(i).weight<mincycle){
+										mincycle=paths.get(i).weight;
+										minpathcycle=paths.get(i);
+									}
+									
+//									System.out.println("---符合所有约束(有环最小)---");
+//									System.out.print("路径：");
+//									printStack(paths.get(i).path,this.total);
+//									System.out.print("路径长度："+paths.get(i).weight);
+//									System.out.println();
+									
+								}
+								break;
+								
+							}
+							if(isConnect(paths.get(i).path, flag, c2)&&!paths.get(i).path.contains(c1)){
+								paths.get(i).path=addNumInStack(paths.get(i).path, c1, flag);
+								paths.get(i).weight=countWeight(paths.get(i).path, 17);
+								if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)){
+									if(paths.get(i).weight<mincycle){
+										mincycle=paths.get(i).weight;
+										minpathcycle=paths.get(i);
+									}
+									
+//									System.out.println("---符合所有约束(有环最小)---");
+//									System.out.print("路径：");
+//									printStack(paths.get(i).path,this,total);
+//									System.out.print("路径长度："+paths.get(i).weight);
+//									System.out.println();
+									
+								}
+							}
+							break;
+						}
+						}
+				}
+										
+					System.out.println("---符合所有约束(有环最小)---");
+					System.out.print("路径：");
+					printStack(minpathcycle.path,this.total-1);
+					System.out.print("经过点数："+(minpathcycle.path.size()+1)+" ");
+					System.out.print("路径长度："+minpathcycle.weight);
+					System.out.println();
+					
 		
 		}
 		
-		
+		private Stack<Integer> addNumInStack(Stack<Integer> stack,int c2,int flag){
+			Stack<Integer> newstack=(Stack<Integer>)stack.clone();
+			Stack<Integer> temp=new Stack<Integer>();
+			while(newstack.peek()!=flag){
+				temp.push(newstack.pop());
+			}
+			newstack.push(c2);
+			newstack.push(flag);
+			while(!temp.isEmpty()){
+				newstack.push(temp.pop());
+			}
+			
+			return newstack;
+		}
 		
 		
 		private  void replaceZeroToMax(int[][] graph){
@@ -298,29 +342,7 @@ public class GrfAllEdge {
 				}
 			
 			}
-			//System.out.print("路径：");
-			//printArr(p);
-			//System.out.print("起始点到各点的最小距离：");
-			//printArr(d);
 			return d[end];
-		}
-		
-		
-		//有环判定函数
-		private int isCycle(int[][] graph,int n1,int n2,int b1,int b2,int b3,int b4){
-			int n=graph.length;
-			int d=dijkstraown(graph, n1, n2);
-			boolean flag=false;
-			if(((n1==b1)&&(n2==b2))||((n1==b2)&&(n2==b1))||((n1==b3)&&(n2==b4))||((n1==b3)&&(n2==b4)))
-				flag=false;
-			else
-				flag=true;
-			for(int k=0;k<n;k++){
-				if(graph[n1][k]>0&&graph[n2][k]>0&&(d==graph[n1][k]+graph[k][n2])&&flag)
-					return k;
-			}
-			
-			return 0;
 		}
 		
 		
@@ -329,22 +351,23 @@ public class GrfAllEdge {
 			
 			
 			int pointnum=graph[0][0];
-			System.out.println(pointnum);
 			for(int i=0;i<pointnum;i++)
 				for(int j=0;j<pointnum;j++)
 					this.matirx[i][j]=0;
 			
 			int edgenum=graph[0][1];
 			for(int i=1;i<=edgenum;i++)
-				this.matirx[graph[i][1]][graph[i][2]]=this.matirx[graph[i][2]][graph[i][1]]=graph[i][3];			
-		}
+				this.matirx[graph[i][1]][graph[i][2]]=this.matirx[graph[i][2]][graph[i][1]]=graph[i][3];	
+			
+			this.matirx[graph[0][8]][graph[0][9]]=this.matirx[graph[0][9]][graph[0][8]]=0;
+			}
 		
 		//字符串转化为数组
 		public static int[] converStringToInt(String str){
 			if(str==null)
 				return null;
 			
-			int[] s=new int[4];
+			int[] s=new int[10];
 			char[] chas=str.toCharArray();
 			int num=0,res=0,cur=0;
 			for(int i=0;i<chas.length;i++){
@@ -377,7 +400,9 @@ public class GrfAllEdge {
 		    }
 		    String line = "";
 		    String everyLine = "";
-		    int obj[][] = new int[5000][]; 
+		    
+		    int obj[][] = new int[5000][]; //文件中的值转化的矩阵
+		    
 		    try {
 		            List<String> allString = new ArrayList<>();
 		            while ((line = br.readLine()) != null)  //读取到的内容给line变量
@@ -387,7 +412,6 @@ public class GrfAllEdge {
 		                allString.add(everyLine);
 		            }
 		            int size = allString.size(); 
-		         
 		            if (size == 0) { 
 		                //log.info("集合为空,转换数组失败，将返回null！"); 
 		               // return null; 
@@ -396,12 +420,13 @@ public class GrfAllEdge {
 		            for (int i = 0; i < size; i++) { 
 		                obj[i] =converStringToInt(allString.get(i)); 
 		            } 	            
-		            //System.out.println("csv表格中所有行数："+allString.size());
 		    } catch (IOException e)
 		    {
 		        e.printStackTrace();
 		    }
 		   
+		    
+		    
 		    ArrayList<Path> paths=new ArrayList<Path>();	//存储所有符合条件路径
 		    ArrayList<Path> minpaths=new ArrayList<Path>();//存储最短路径
 		    int origin=0;
@@ -409,10 +434,7 @@ public class GrfAllEdge {
 		    GrfAllEdge grf=new GrfAllEdge(goal, paths);
 			
 			grf.initGrf(obj);
-	    	//grf.printMatrix();
-			
-			
-			
+
 			System.out.print("\n-----寻找起点到终点的所有路径开始-----");
 			
 			Stack<Integer> stack=new Stack<Integer>();		
@@ -421,18 +443,9 @@ public class GrfAllEdge {
 			System.out.println();
 			System.out.println("路径总数："+paths.size());
 			minpaths=grf.findMinPath(paths,goal-1);
-			//printPaths(minpaths);
 
-			//System.out.println(paths.size());
-			//grf.printPaths(grf.paths);
-			//grf.printStack1(paths.get(1));
-			//System.out.println();
-			//grf.dijkstraown(grf.matirx,0,17);
-			//System.out.println(grf.isConnect(paths.get(2), 2, 4));\
-//			System.out.println();
-//			System.out.println("---------------符合约束路径------------------");
-//			grf.searchPaths(paths);
-			//System.out.println(paths.get(0).weight);
+			
+			grf.searchPaths(paths,grf.matirx,obj[0][2],obj[0][3],obj[0][4],obj[0][5],obj[0][6],obj[0][7]);
 			
 			
 			long endTime=System.currentTimeMillis();
