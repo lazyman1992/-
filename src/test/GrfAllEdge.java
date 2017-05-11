@@ -183,12 +183,10 @@ public class GrfAllEdge {
 				return ;
 			
 			
-			
-			//无环所有路径
 			int min=Integer.MAX_VALUE;
 			Path minpath=new Path(null, 0);
 			for(int i=0;i<paths.size();i++){		
-				if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)){	
+				if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)&&paths.get(i).path.size()<9){	
 					if(paths.get(i).weight<min){
 						min=paths.get(i).weight;
 						minpath=paths.get(i);
@@ -197,12 +195,30 @@ public class GrfAllEdge {
 				}		
 
 				}
-			System.out.println("---符合所有约束(无环最小)---");
-			System.out.print("路径：");
-			printStack(minpath.path,this.total-1);
-			System.out.print("经过点数："+(minpath.path.size()+1)+" ");
-			System.out.print("路径长度："+minpath.weight);
-			System.out.println();
+			
+			if(minpath.path==null)
+				System.out.println("\n-----无满足所有约束的最优解-----\n");
+			
+			
+			//无环所有路径
+			int minuncycle=Integer.MAX_VALUE;
+			Path minpathuncycle=new Path(null, 0);
+			for(int i=0;i<paths.size();i++){		
+				if(paths.get(i).path.contains(n1)&&paths.get(i).path.contains(n2)&&isConnect(paths.get(i).path, b1, b2)&&isConnect(paths.get(i).path, b3, b4)){	
+					if(paths.get(i).weight<minuncycle){
+						minuncycle=paths.get(i).weight;
+						minpathuncycle=paths.get(i);
+					}
+								
+				}		
+
+				}
+//			System.out.println("---符合所有约束(无环最小)---");
+//			System.out.print("路径：");
+//			printStack(minpathuncycle.path,this.total-1);
+//			System.out.print("经过点数："+(minpathuncycle.path.size()+1)+" ");
+//			System.out.print("路径长度："+minpathuncycle.weight);
+//			System.out.println();
 			
 			
 			//有环路径
@@ -261,12 +277,33 @@ public class GrfAllEdge {
 						}
 				}
 										
-					System.out.println("---符合所有约束(有环最小)---");
-					System.out.print("路径：");
-					printStack(minpathcycle.path,this.total-1);
-					System.out.print("经过点数："+(minpathcycle.path.size()+1)+" ");
-					System.out.print("路径长度："+minpathcycle.weight);
-					System.out.println();
+//					System.out.println("---符合所有约束(有环最小)---");
+//					System.out.print("路径：");
+//					printStack(minpathcycle.path,this.total-1);
+//					System.out.print("经过点数："+(minpathcycle.path.size()+1)+" ");
+//					System.out.print("路径长度："+minpathcycle.weight);
+//					System.out.println();
+					
+				   System.out.println("-----次优解-----");
+				   System.out.println("不满足经过点数小于9，满足其他约束");				   
+					if(minpathuncycle.weight<minpathcycle.weight){
+						
+						System.out.print("路径：");
+						printStack(minpathuncycle.path,this.total-1);
+						System.out.print("经过点数："+(minpathuncycle.path.size()+1)+" ");
+						System.out.print("路径长度："+minpathuncycle.weight);
+						System.out.println();
+					}
+					else{
+						System.out.print("路径：");
+						printStack(minpathcycle.path,this.total-1);
+						System.out.print("经过点数："+(minpathcycle.path.size()+1)+" ");
+						System.out.print("路径长度："+minpathcycle.weight);
+						System.out.println();
+						
+						
+					}
+					
 					
 		
 		}
@@ -427,24 +464,26 @@ public class GrfAllEdge {
 		   
 		    
 		    
-		    ArrayList<Path> paths=new ArrayList<Path>();	//存储所有符合条件路径
-		    ArrayList<Path> minpaths=new ArrayList<Path>();//存储最短路径
+		    ArrayList<Path> paths=new ArrayList<Path>();	//存储所有起点到终点（无重复点）的路径
+//		    ArrayList<Path> minpaths=new ArrayList<Path>();//存储最短路径
 		    int origin=0;
 			int goal=obj[0][0];
 		    GrfAllEdge grf=new GrfAllEdge(goal, paths);
 			
 			grf.initGrf(obj);
 
-			System.out.print("\n-----寻找起点到终点的所有路径开始-----");
+			System.out.print("-----寻找起点到终点的所有路径开始-----\n");
 			
 			Stack<Integer> stack=new Stack<Integer>();		
 			stack.push(origin);
+			//DFS搜索并保存所有路径
 			grf.dfsStack(-1, goal-1, stack);
-			System.out.println();
-			System.out.println("路径总数："+paths.size());
-			minpaths=grf.findMinPath(paths,goal-1);
+//			System.out.println();
+//			System.out.println("路径总数："+paths.size());
+			//输出最小路径
+			//minpaths=grf.findMinPath(paths,goal-1);
 
-			
+			//在所有路径中搜索并输出满足约束的路径
 			grf.searchPaths(paths,grf.matirx,obj[0][2],obj[0][3],obj[0][4],obj[0][5],obj[0][6],obj[0][7]);
 			
 			
